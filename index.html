@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فيب ستار | Vape Star</title>
+    
+    <!-- تضمين مكتبات Firebase الأساسية عبر الإنترنت -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <style>
+        /* التنسيقات العامة والمظهر الفاخر الحديث */
+        :root {
+            --bg-color: #08080c;
+            --card-bg: #121218;
+            --card-sub-bg: #1a1a24;
+            --primary-color: #ff2a2a;
+            --primary-hover: #e01b1b;
+            --accent-glow: rgba(255, 42, 42, 0.4);
+            --text-color: #ffffff;
+            --text-muted: #a0a5b5;
+            --success-color: #00ff87;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* رأس الصفحة بتأثير احترافي متحرك */
+        header {
+            background: linear-gradient(135deg, #161622 0%, #08080c 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+            box-shadow: 0 5px 30px rgba(255, 42, 42, 0.2);
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 3.2em;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            color: var(--text-color);
+            text-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        header p {
+            margin: 12px 0 0 0;
+            color: var(--text-muted);
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        /* زر الإدارة المخفي بأناقة في الهيدر */
+        .admin-login-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #1a1a26;
+            color: var(--text-muted);
+            border: 1px solid #333344;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: none;
+            width: auto;
+        }
+
+        .admin-login-btn:hover {
+            color: white;
+            border-color: var(--primary-color);
+            background: #222230;
+        }
+
+        /* الحاويات الرئيسية */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 35px;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            border: 1px solid #222230;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 2em;
+            border-bottom: 2px solid #222230;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* التنسيقات المتطورة للمدخلات والنماذج */
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        input, textarea {
+            width: 100%;
+            margin-bottom: 25px;
+            padding: 16px;
+            border: 2px solid #222230;
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #0c0c12;
+            color: #fff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 12px var(--accent-glow);
+            background-color: #12121a;
+        }
+
+        input[type="file"] {
+            padding: 12px;
+            background: #1a1a26;
+            cursor: pointer;
+            border-style: dashed;
+        }
+
+        /* الأزرار الاحترافية */
+        button {
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #ff5252);
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 6px 20px rgba(255, 42, 42, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #e01b1b, var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 42, 42, 0.5);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #222232;
+            box-shadow: none;
+            font-size: 14px;
+            padding: 10px 15px;
+            margin-bottom: 0;
+            width: auto;
+        }
+        .btn-secondary:hover {
+            background: #32324a;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, #d32f2f, #f44336);
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+            font-size: 14px;
+            padding: 10px 15px;
+            margin-bottom: 0;
+            width: auto;
+        }
+        .btn-danger:hover {
+            background: #b71c1c;
+            box-shadow: 0 6px 15px rgba(211, 47, 47, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* نافذة تسجيل الدخول المنبثقة (Modal) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: none; /* مخفية افتراضياً */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            border: 1px solid var(--primary-color);
+            position: relative;
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            left: 25px; /* وضعناها يساراً لتناسب اللغة العربية */
+            font-size: 28px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--primary-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* شبكة عرض المنتجات */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background-color: var(--card-sub-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #28283a;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 35px rgba(255, 42, 42, 0.15);
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            background-color: #08080c;
+            overflow: hidden;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.06);
+        }
+
+        .no-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-style: italic;
+            background: linear-gradient(45deg, #121218, #1c1c28);
+        }
+
+        .product-details {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-price {
+            color: var(--success-color);
+            font-size: 1.7em;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(0, 255, 135, 0.2);
+        }
+
+        .product-qty {
+            background-color: rgba(255, 42, 42, 0.12);
+            color: var(--primary-color);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            align-self: flex-start;
+            margin-bottom: 15px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 42, 42, 0.2);
+        }
+
+        .out-of-stock {
+            background-color: rgba(120, 120, 120, 0.2) !important;
+            color: #777 !important;
+            border: 1px solid #444 !important;
+        }
+
+        .product-desc {
+            color: #d8dbe4;
+            font-size: 1em;
+            line-height: 1.6;
+            margin: 0;
+            word-wrap: break-word;
+        }
+
+        /* لوحة تعديل الكميات المخصصة للأدمن */
+        .admin-inventory-list {
+            margin-top: 35px;
+            border-top: 2px dashed #333344;
+            padding-top: 25px;
+        }
+
+        .inventory-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1a1a26;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .inventory-details {
+            flex-grow: 1;
+            margin-left: 20px;
+        }
+
+        .inventory-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .inventory-actions input {
+            width: 90px;
+            margin-bottom: 0;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* نظام الإشعارات الداخلي */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #12121a;
+            border-right: 5px solid var(--success-color);
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 3000;
+            display: none;
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        #loadingMsg, #emptyMsg {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.3em;
+            grid-column: 1 / -1;
+            padding: 50px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الإشعار الاحترافي السفلي -->
+    <div id="toast" class="toast-notification">تمت العملية بنجاح!</div>
+
+    <header>
+        <button class="admin-login-btn" onclick="openLoginModal()">🔒 إدارة</button>
+        <h1>فيب ستار ★ Vape Star</h1>
+        <p>الوجهة الأولى والأرقى للأرگيلة الإلكترونية</p>
+    </header>
+
+    <!-- نافذة تسجيل الدخول المنبثقة (مخفية للزبائن) -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeLoginModal()">&times;</span>
+            <h2 style="font-size: 1.5em; border-bottom: none; margin-bottom: 20px; justify-content: center;">🔒 تسجيل دخول الإدارة</h2>
+            <label>اسم المستخدم:</label>
+            <input type="text" id="username" placeholder="ادخل اسم المستخدم">
+            <label>كلمة المرور:</label>
+            <input type="password" id="password" placeholder="••••••••">
+            <button onclick="checkLogin()">دخول آمن</button>
+            <p id="errorMsg" style="color: var(--primary-color); text-align: center; display: none; font-weight: bold; margin-top: 15px;">❌ بيانات الدخول غير صحيحة!</p>
+        </div>
+    </div>
+
+    <!-- لوحة تحكم الإدارة الشاملة (تفتح لحسين فقط بعد تسجيل الدخول) -->
+    <div class="container hidden" id="adminSection">
+        <h2 style="color: var(--primary-color);">⚡ لوحة التحكم الفاخرة - إضافة منتج جديد</h2>
+        
+        <label for="prodImage">1. صورة المنتج المُراد رفعه (يفضل جودة عالية):</label>
+        <input type="file" id="prodImage" accept="image/*">
+        
+        <label for="prodPrice">2. سعر المنتج المعروض للزبائن:</label>
+        <input type="text" id="prodPrice" placeholder="مثال: 35,000 دينار">
+        
+        <label for="prodQty">3. العدد والكمية المتوفرة في المخزن حالياً:</label>
+        <input type="number" id="prodQty" placeholder="مثال: 15">
+        
+        <label for="prodDesc">4. وصف ومميزات الأرگيلة والنكهة:</label>
+        <textarea id="prodDesc" rows="4" placeholder="اكتب مواصفات الجهاز، النكهة، والبطارية بالتفصيل هنا..."></textarea>
+        
+        <button onclick="publishProduct()">🚀 نشر المنتج في المتجر فوراً</button>
+
+        <div class="admin-inventory-list">
+            <h3 style="color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">📦 إدارة المخزن والقطع المتوفرة وتعديلها:</h3>
+            <div id="adminInventoryContainer">
+                <p style="color: var(--text-muted); font-style: italic;">جاري جلب قائمة السلع للتعديل الفوري...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- قسم عرض المنتجات العام (يراه كل الزوار) -->
+    <div class="container" id="storeFront">
+        <h2>🔥 المنتجات المتوفرة حالياً بالمتجر</h2>
+        <div class="products-grid" id="productsContainer">
+            <p id="loadingMsg">جاري مزامنة وتحميل أحدث السلع الفاخرة من السيرفر...</p>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        //  إعدادات الربط بـ Firebase الخاصة بك
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAFW_FY8zO_Y0CdBuvHlfY0afSAaDzGnVY", 
+            authDomain: "vibe-srar.firebaseapp.com",
+            databaseURL: "https://vibe-srar-default-rtdb.firebaseio.com",
+            projectId: "vibe-srar",
+            storageBucket: "vibe-srar.firebasestorage.app",
+            messagingSenderId: "74684659203",
+            appId: "1:74684659203:web:2e4389f3805a3e341ec036"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // دوال فتح وإغلاق نافذة تسجيل الدخول المنبثقة
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.style.borderRightColor = isError ? 'var(--primary-color)' : 'var(--success-color)';
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3500);
+        }
+
+        // دالة التحقق من هوية الأدمن
+        function checkLogin() {
+            const user = document.getElementById('username').value;
+            // يمكنك إضافة حقل كلمة المرور للتحقق أيضاً إذا شئت
+            if(user === 'Hussin_Majed@@##') {
+                closeLoginModal(); // إغلاق النافذة فوراً
+                document.getElementById('adminSection').classList.remove('hidden'); // إظهار لوحة التحكم
+                document.querySelector('.admin-login-btn').style.display = 'none'; // إخفاء زر الإدارة من الهيدر
+                showToast("مرحباً بك مجدداً يا حسين! تم فتح لوحة التحكم بنجاح.");
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        // جلب البيانات بشكل حي
+        database.ref('products').on('value', (snapshot) => {
+            const container = document.getElementById('productsContainer');
+            const adminInventoryContainer = document.getElementById('adminInventoryContainer');
+            
+            container.innerHTML = '';
+            adminInventoryContainer.innerHTML = '';
+            
+            const data = snapshot.val();
+            if (data) {
+                const keys = Object.keys(data).reverse();
+                
+                keys.forEach((key) => {
+                    const product = data[key];
+                    const isOutOfStock = parseInt(product.qty) <= 0;
+                    const qtyText = isOutOfStock ? "نفذت الكمية ⚠️" : `المتفرغ حالياً: ${product.qty} قطع`;
+                    const qtyClass = isOutOfStock ? "product-qty out-of-stock" : "product-qty";
+
+                    // كارت الزبائن
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-card';
+                    productCard.innerHTML = `
+                        <div class="product-image-wrapper">
+                            ${product.image ? `<img src="${product.image}" alt="Vape Product">` : `<div class="no-image">📸 لا توجد صورة متوفرة</div>`}
+                        </div>
+                        <div class="product-details">
+                            <div class="product-price">${product.price}</div>
+                            <div class="${qtyClass}">${qtyText}</div>
+                            <p class="product-desc">${product.desc}</p>
+                        </div>
+                    `;
+                    container.appendChild(productCard);
+
+                    // سطر الأدمن
+                    const inventoryItem = document.createElement('div');
+                    inventoryItem.className = 'inventory-item';
+                    inventoryItem.innerHTML = `
+                        <div class="inventory-details">
+                            <strong style="color:var(--success-color);">${product.price}</strong>
+                            <p style="margin:5px 0 0 0; font-size:13px; color:var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px;">${product.desc}</p>
+                        </div>
+                        <div class="inventory-actions">
+                            <label style="margin-bottom:0; font-size:13px;">القطع الحالية:</label>
+                            <input type="number" id="input-qty-${key}" value="${product.qty}">
+                            <button class="btn-secondary" onclick="updateQuantity('${key}')">تحديث 🔁</button>
+                            <button class="btn-danger" onclick="deleteProduct('${key}')">حذف 🗑️</button>
+                        </div>
+                    `;
+                    adminInventoryContainer.appendChild(inventoryItem);
+                });
+            } else {
+                container.innerHTML = '<p id="emptyMsg">المتجر فارغ حالياً، انتظر إضافة منتجات جديدة قريباً!</p>';
+                adminInventoryContainer.innerHTML = '<p style="color:var(--text-muted);">لا توجد منتجات حالية بالمخزن لتعديلها.</p>';
+            }
+        });
+
+        function publishProduct() {
+            const imageInput = document.getElementById('prodImage');
+            const price = document.getElementById('prodPrice').value;
+            const qty = document.getElementById('prodQty').value;
+            const desc = document.getElementById('prodDesc').value;
+
+            if(!price || !qty || !desc) {
+                showToast("الرجاء ملء جميع الحقول المطلوبة أولاً قبل النشر!", true);
+                return;
+            }
+
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    saveToFirebase(price, qty, desc, e.target.result);
+                }
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                saveToFirebase(price, qty, desc, '');
+            }
+        }
+
+        function saveToFirebase(price, qty, desc, imageBase64) {
+            database.ref('products').push({
+                price: price,
+                qty: qty,
+                desc: desc,
+                image: imageBase64
+            }).then(() => {
+                showToast("✨ تم تحديث السيرفر بنجاح ونشر المنتج الجديد للزبائن!");
+                document.getElementById('prodImage').value = '';
+                document.getElementById('prodPrice').value = '';
+                document.getElementById('prodQty').value = '';
+                document.getElementById('prodDesc').value = '';
+            }).catch((error) => {
+                showToast("فشل النشر، تأكد من إعدادات الـ Firebase: " + error.message, true);
+            });
+        }
+
+        function updateQuantity(productKey) {
+            const newQty = document.getElementById(`input-qty-${productKey}`).value;
+            if(newQty === '') {
+                showToast("يرجى إدخال رقم كمية صالح!", true);
+                return;
+            }
+
+            database.ref('products/' + productKey).update({
+                qty: parseInt(newQty)
+            }).then(() => {
+                showToast("🔄 تم تحديث كمية المخزون للقطعة بنجاح!");
+            }).catch((error) => {
+                showToast("حدث خطأ أثناء التحديث: " + error.message, true);
+            });
+        }
+
+        function deleteProduct(productKey) {
+            if(confirm("هل أنت متأكد تماماً من رغبتك في حذف هذا المنتج نهائياً من المتجر؟")) {
+                database.ref('products/' + productKey).remove()
+                .then(() => {
+                    showToast("🗑️ تم حذف المنتج بنجاح من السيرفر والمخازن.");
+                }).catch((error) => {
+                    showToast("حدث خطأ أثناء الحذف: " + error.message, true);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
