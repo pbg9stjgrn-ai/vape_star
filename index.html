@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر فيب ستار | VAPE STAR</title>
+    <style>
+        /* =========================================
+           PREMIUM LIGHT & GOLD THEME VARIABLES
+           Fresh white background theme with clear slate contrast
+           =========================================
+        */
+        :root {
+            --dark-bg: #ffffff;        /* Pure white main background */
+            --card-smoke: #ffffff;     /* Crisp white product cards */
+            --vape-gold: #b45309;      /* Elegant deep amber/gold for high contrast on white */
+            --vape-amber: #d97706;     /* Rich accent gold */
+            --text-light: #0f172a;     /* Dark slate for high legibility */
+            --text-muted: #475569;     /* Slate grey for subtexts and descriptions */
+            --danger-red: #dc2626;     /* Crimson red for warning/delete buttons */
+            --admin-purple: #6d28d9;   /* Bold purple for Admin controls */
+            --border-color: #cbd5e1;   /* Perfect structural line separator color */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Top Navigation Bar - Light Mode */
+        .vape-navbar {
+            background-color: #ffffff;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--vape-gold);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .brand-logo {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--text-light);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+        .brand-logo span { color: var(--vape-gold); text-shadow: 0 0 1px var(--vape-gold); }
+
+        .nav-menu { display: flex; gap: 20px; }
+        .nav-menu a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 4px;
+            transition: 0.3s ease;
+        }
+        .nav-menu a:hover, .nav-menu a.active-link {
+            color: var(--vape-gold);
+            background-color: rgba(180, 83, 9, 0.08);
+        }
+
+        .auth-container { display: flex; align-items: center; gap: 15px; }
+        .user-badge { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
+
+        .btn-login {
+            background: transparent;
+            color: var(--vape-gold);
+            border: 2px solid var(--vape-gold);
+            padding: 8px 20px;
+            border-radius: 0px; /* Sharp Square Concept */
+            cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        .btn-login:hover {
+            background: var(--vape-gold);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(180, 83, 9, 0.2);
+        }
+        .btn-login.status-logged { border-color: var(--danger-red); color: var(--danger-red); }
+        .btn-login.status-logged:hover { background: var(--danger-red); color: white; box-shadow: none; }
+        .btn-login.status-admin { border-color: var(--admin-purple); color: white; background: var(--admin-purple); }
+
+        .page-content { display: none; padding-top: 90px; }
+        .page-content.active { display: block; }
+
+        /* Showcase Banner Design with image.png backdrop */
+        .showcase {
+            background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(255,255,255,1) 100%), url('image.png') center/cover;
+            text-align: center;
+            padding: 130px 20px 90px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .showcase h1 { font-size: 4rem; margin: 0; font-weight: 900; color: #ffffff; text-shadow: 0 4px 12px rgba(0,0,0,0.7); }
+        .showcase h1 span { color: #ffca3a; }
+        .showcase p { color: #ffffff; font-size: 1.4rem; font-weight: 600; margin-top: 15px; max-width: 700px; margin-left: auto; margin-right: auto; text-shadow: 0 3px 10px rgba(0,0,0,0.9); }
+
+        .main-container { padding: 40px 5%; max-width: 1300px; margin: auto; }
+        .page-title { font-size: 2.4rem; margin-bottom: 10px; color: var(--text-light); text-align: center; font-weight: 800; }
+        .page-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 40px; font-size: 1.15rem; }
+        .title-line { width: 60px; height: 4px; background: var(--vape-gold); margin: 10px auto 30px; }
+
+        /* =========================================
+           STRICT 2-COLUMN SYMMETRICAL GRID SYSTEM
+           =========================================
+        */
+        .vape-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 0px; 
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .vape-card {
+            background-color: var(--card-smoke);
+            border-left: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 0px; 
+            padding: 35px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: background-color 0.3s ease;
+        }
+        .vape-card:hover {
+            background-color: #f8fafc; 
+        }
+
+        /* NATURAL ASPECT RATIO IMAGE FRAME */
+        .vape-card-img {
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            max-height: 280px; 
+            object-fit: contain; 
+            border-radius: 0px; 
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .vape-card-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            text-align: right;
+        }
+
+        .vape-card-desc {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            margin: 0 0 20px 0;
+            text-align: right;
+            flex-grow: 1;
+        }
+
+        .btn-direct-entry {
+            background: var(--vape-gold);
+            color: #ffffff;
+            border: none;
+            padding: 22px 50px; 
+            width: 100%;
+            border-radius: 0px; 
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 1.5rem; 
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(180, 83, 9, 0.2);
+        }
+        .btn-direct-entry:hover {
+            background: var(--vape-amber);
+            transform: scale(1.02);
+        }
+
+        .admin-number-badge {
+            background: linear-gradient(135deg, var(--vape-gold), var(--vape-amber));
+            color: #ffffff;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 0px; 
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            direction: rtl; 
+            margin-top: 5px;
+        }
+        .admin-price-badge {
+            background: linear-gradient(135deg, var(--admin-purple), #4c1d95);
+        }
+
+        .admin-edit-block {
+            display: none;
+            background: #f1f5f9;
+            border: 1px dashed var(--admin-purple);
+            padding: 12px;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        .btn-destroy {
+            background-color: rgba(220, 38, 36, 0.08);
+            color: var(--danger-red);
+            border: 1px solid var(--danger-red);
+            padding: 12px;
+            border-radius: 0px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
+            margin-top: 15px;
+            width: 100%;
+            transition: 0.2s;
+            display: none;
+        }
+        .btn-destroy:hover { background-color: var(--danger-red); color: white; }
+
+        .management-box {
+            background: #f8fafc;
+            border: 2px dashed var(--admin-purple);
+            padding: 30px;
+            border-radius: 0px;
+            max-width: 600px;
+            margin: 0 auto 50px auto;
+            display: none;
+            color: var(--text-light);
+        }
+        .management-box h3 { margin-top: 0; color: var(--admin-purple); text-align: center; }
+
+        .modal-overlay {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); align-items: center; justify-content: center;
+        }
+        .modal-body { background-color: #ffffff; border: 1px solid var(--border-color); padding: 30px; border-radius: 0px; width: 90%; max-width: 400px; text-align: center; color: var(--text-light); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .input-element { width: 100%; padding: 12px; background: #f8fafc; border: 1px solid var(--border-color); border-radius: 0px; box-sizing: border-box; color: var(--text-light); font-family: inherit; margin-bottom: 15px; }
+        .input-element:focus { border-color: var(--vape-gold); outline: none; }
+        
+        .modal-actions { display: flex; gap: 10px; }
+        .action-button { flex: 1; padding: 12px; border: none; border-radius: 0px; cursor: pointer; font-weight: bold; font-family: inherit; }
+        .action-confirm { background: var(--vape-gold); color: white; }
+        .action-cancel { background: #e2e8f0; color: var(--text-light); }
+
+        .greeting-content {
+            background: #ffffff; border-radius: 0px; box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+            text-align: center; border: 3px solid var(--vape-gold); padding: 35px;
+            animation: modalFadeIn 0.4s ease-out; color: var(--text-light);
+        }
+        .size-mobile { width: 85% !important; max-width: 340px !important; }
+        .size-desktop { width: 45% !important; max-width: 520px !important; }
+
+        @keyframes modalFadeIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-box { background-color: #fef3c7; color: #92400e; padding: 15px; border-radius: 0px; text-align: center; font-weight: bold; border: 1px solid #fde68a; margin-bottom: 20px; }
+        .form-submission-btn { background: var(--vape-gold); color: white; border: none; padding: 14px; width: 100%; border-radius: 0px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .form-submission-btn.admin-color-btn { background: var(--admin-purple); color: white; }
+
+        .feedback-section { background-color: #f8fafc; padding: 60px 5%; margin-top: 60px; border-top: 1px solid var(--border-color); }
+        .feedback-card { background: #ffffff; padding: 25px; border-radius: 0px; border-left: 4px solid var(--vape-gold); border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-top: 1px solid var(--border-color); text-align: right; position: relative; }
+        .feedback-user { font-weight: bold; color: var(--text-light); }
+        .feedback-stars { color: #f59e0b; font-size: 0.9rem; margin-top: 4px; }
+        
+        .btn-delete-feedback {
+            position: absolute; top: 15px; left: 15px; background: transparent; color: var(--danger-red);
+            border: 1px solid var(--danger-red); padding: 4px 10px; border-radius: 0px; font-size: 0.8rem;
+            cursor: pointer; display: none;
+        }
+
+        .empty-status { grid-column: 1 / -1; padding: 60px; text-align: center; background: #f8fafc; border: 2px dashed var(--border-color); border-radius: 0px; color: var(--text-muted); font-size: 1.1rem; }
+
+        footer { background-color: #f1f5f9; text-align: center; padding: 60px 20px 30px; border-top: 2px solid var(--border-color); color: var(--text-light); }
+        .contact-grid { margin: 30px 0; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .social-button { display: inline-block; padding: 14px 35px; color: white; text-decoration: none; border-radius: 0px; font-weight: bold; transition: 0.3s; }
+        .wa-color { background-color: #25D366; } .wa-color:hover { background-color: #1ebd58; box-shadow: 0 4px 12px rgba(37,211,102,0.2); }
+        .fb-color { background-color: #1877F2; } .fb-color:hover { background-color: #1464cd; box-shadow: 0 4px 12px rgba(24,119,242,0.2); }
+    </style>
+</head>
+<body>
+
+    <!-- Main Store Navigation Topbar -->
+    <div class="vape-navbar">
+        <a href="#" class="brand-logo" onclick="toggleRoute('home')">VAPE <span>STAR ⭐</span></a>
+        <div class="nav-menu">
+            <a href="#" id="link-home" class="active-link" onclick="toggleRoute('home')">🏠 الرئيسية</a>
+            <a href="#" id="link-vapes" onclick="toggleRoute('vapes')">💨 قسم الفيبات (Vapes)</a>
+        </div>
+        <div class="auth-container">
+            <span id="display-user" class="user-badge">👤 تصفح كـ زائر</span>
+            <button class="btn-login" id="triggerAuthBtn" onclick="processAuthSwitch()">تسجيل الدخول</button>
+        </div>
+    </div>
+
+    <!-- Login Dialog Backdrop Window -->
+    <div id="dialogOverlay" class="modal-overlay">
+        <div class="modal-body">
+            <h3 style="margin-top: 0; font-weight: 800;">تسجيل الدخول | فيب ستار</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">اكتب اسمك الشخصي الآن للدخول وتفعيل نظام التقييمات:</p>
+            <input type="text" id="usernameField" class="input-element" placeholder="أدخل أي اسم تفضله هنا..." required>
+            <div class="modal-actions">
+                <button class="action-button action-confirm" onclick="verifyUserIdentity()">تأكيد الهوية</button>
+                <button class="action-button action-cancel" onclick="dismissDialog()">تراجع</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Platform Responsive Greeting Unit -->
+    <div id="greetingOverlay" class="modal-overlay">
+        <div id="greetingBox" class="greeting-content">
+            <div id="greetingSymbol" style="font-size: 3.5rem; margin-bottom: 10px;">🌟</div>
+            <h2 id="greetingHeader" style="margin: 5px 0; font-weight:800;">مرحباً بك</h2>
+            <p id="greetingText" style="color: var(--text-muted); margin-bottom: 25px; font-size: 1.1rem;"></p>
+            <button class="form-submission-btn" onclick="dismissGreetingOverlay()" style="max-width: 200px; margin: auto; font-weight:900;">ابدأ التصفح 🔥</button>
+        </div>
+    </div>
+
+    <!-- Admin Interactive Management Area -->
+    <div class="main-container" style="padding-bottom: 0; padding-top: 110px;">
+        <div id="adminManagementPanel" class="management-box">
+            <h3>⚙️ لوحة تحكم الإدارة لـ (قسم الفيبات)</h3>
+            <form onsubmit="handleItemCreation(event)">
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-size:0.9rem; font-weight:600;">صورة جهاز الفيب أو النكهة (.jpg, .jpeg, .png, .webp, .gif):</label>
+                    <input type="file" id="upload-file" class="input-element" accept=".jpg, .jpeg, .png, .webp, .gif" required>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-size:0.9rem; font-weight:600;">اسم المنتج التجاري:</label>
+                    <input type="text" id="upload-title" class="input-element" placeholder="مثال: سحبة GeekVape Wenax Q" required>
+                </div>
+                
+                <!-- SEPARATE PRICE AND QUANTITY FIELDS -->
+                <div style="margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display:block; margin-bottom:5px; font-size:0.9rem; color: var(--admin-purple); font-weight:800;">سعر المنتج (بالدينار):</label>
+                        <input type="text" id="upload-price" class="input-element" placeholder="مثال: 25,000" required>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display:block; margin-bottom:5px; font-size:0.9rem; color: var(--vape-gold); font-weight:800;">عدد الأجهزة (النراكيل) المتوفرة:</label>
+                        <input type="number" id="upload-admin-number" class="input-element" placeholder="مثال: 50" required>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-size:0.9rem; font-weight:600;">وصف النكهة أو مواصفات الجهاز بالتفصيل:</label>
+                    <textarea id="upload-desc" class="input-element" rows="3" placeholder="مثال: بطارية مدمجة 1000 ملي أمبير، التحكم بالتهوية..." required></textarea>
+                </div>
+                <button type="submit" class="form-submission-btn admin-color-btn">⚡ نشر وتثبيت المنتج في الخانة الآن</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== PAGE ONE: HOME LANDING ==================== -->
+    <div id="view-home" class="page-content active">
+        <section class="showcase">
+            <h1>فيب <span>ستار</span></h1>
+            <p>خياراتك الفاخرة من أحدث أجهزة الفيب العالمية والبودات والنكهات الأصلية المركزّة في العراق.</p>
+        </section>
+
+        <div class="main-container">
+            <h3 class="page-title">مرحباً بك في عالم التميز</h3>
+            <p class="page-subtitle">اضغط بالأسفل للانتقال فوراً ومستعرضاً كافة المنتجات الحصرية المتوفرة في المتجر</p>
+            <div class="title-line"></div>
+            
+            <div style="max-width: 650px; margin: 0 auto;">
+                <button class="btn-direct-entry" onclick="toggleRoute('vapes')">الدخول المباشر لخانة الفيبات 💨</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== PAGE TWO: THE VAPES GALLERY ==================== -->
+    <div id="view-vapes" class="page-content">
+        <div class="main-container">
+            <h2 class="page-title">💨 خانة أجهزة وفيبات المتجر</h2>
+            <p class="page-subtitle">كل ما هو أصلي وجديد متاح هنا مع تحكم كامل بالأسعار والخصائص من الإدارة</p>
+            <div class="title-line"></div>
+
+            <div class="vape-grid" id="vapes-display-engine"></div>
+        </div>
+    </div>
+
+
+    <!-- CLIENT REVIEWS INFRASTRUCTURE SECTION -->
+    <section class="feedback-section">
+        <h3 class="page-title">تقييمات مجتمع فيب ستار</h3>
+        <p class="page-subtitle">آراء العملاء الحقيقيين وتجاربهم مع خدماتنا</p>
+        <div class="title-line"></div>
+
+        <div class="main-container" style="padding-top:0; padding-bottom: 20px;">
+            <div class="vape-grid" id="feedback-display-engine" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); border:none;"></div>
+        </div>
+
+        <div style="max-width: 600px; margin: 40px auto 0; padding: 0 20px;">
+            <div style="background-color: #ffffff; padding: 30px; border: 1px solid var(--border-color); border-radius: 0px;">
+                <h4 style="margin-top:0; font-size:1.3rem; color: var(--text-light); font-weight:800;">إضافة تقييمك الشخصي:</h4>
+                <div id="restrictedAuthBlock" class="alert-box">⚠️ يرجى تسجيل الدخول أولاً لتتمكن من كتابة مراجعتك ونشر تقييمك الخاص بالاسم الحقيقي.</div>
+                
+                <form id="feedback-submission-form" style="display: none;" onsubmit="commitFeedbackToStorage(event)">
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px; font-size:0.85rem; font-weight:600;">اسم المقيّم:</label>
+                        <input type="text" id="feedback-sender-name" class="input-element" readonly style="background-color: #f1f5f9; color: var(--vape-gold); font-weight:bold;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px; font-size:0.85rem; font-weight:600;">اختر عدد النجوم:</label>
+                        <select id="feedback-stars-count" class="input-element">
+                            <option value="5">⭐⭐⭐⭐⭐ (ممتاز ومطابق للأصلي)</option>
+                            <option value="4">⭐⭐⭐⭐☆ (جيد جداً وسريع)</option>
+                            <option value="3">⭐⭐⭐☆☆ (متوسط الجودة)</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px; font-size:0.85rem; font-weight:600;">تعليقك وتقييمك لمنتجاتنا:</label>
+                        <textarea id="feedback-message-text" class="input-element" rows="4" placeholder="اكتب رأيك هنا بكل صراحة..." required></textarea>
+                    </div>
+                    <button type="submit" class="form-submission-btn">نشر المراجعة علناً ✨</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- FOOTER WITH BUSINESS ROUTING CONNECTIONS -->
+    <footer>
+        <h3 style="color: var(--text-light); margin: 0; font-weight:800;">طلب الشراء أو الاستفسار المباشر</h3>
+        <p style="color: var(--text-muted); font-size:0.95rem; margin-top:5px;">تواصل مباشرة مع إدارة المتجر لتأكيد طلبك وتوصيله لباب بيتك</p>
+        <div class="contact-grid">
+            <a href="https://wa.me/9647823973083" class="social-button wa-color" target="_blank">💬 اطلب عبر واتساب</a>
+            <a href="https://www.facebook.com/share/1CqsUoxGic/?mibextid=wwXIfr" class="social-button fb-color" target="_blank">📘 صفحتنا على فيسبوك</a>
+        </div>
+        <div style="margin-top: 50px; font-size: 0.85rem; color: var(--text-muted); opacity: 0.7;">
+            <p>© 2026 متجر فيب ستار الفاخر - VAPE STAR STORE. جميع الحقوق محفوظة برمجياً.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        let sessionUserName = localStorage.getItem('vape_user_session_name') || "";
+        let sessionStatusActive = localStorage.getItem('vape_user_logged_state') === 'true' && sessionUserName !== "";
+        let selectedSubRoute = "home";
+
+        window.onload = function() {
+            refreshAuthenticationInterface();
+            renderVapesCatalogue();
+            renderCustomerFeedback();
+        };
+
+        function toggleRoute(routeId) {
+            selectedSubRoute = routeId;
+            document.querySelectorAll('.page-content').forEach(view => view.classList.remove('active'));
+            document.getElementById(`view-${routeId}`).classList.add('active');
+            
+            document.querySelectorAll('.nav-menu a').forEach(link => link.classList.remove('active-link'));
+            const activeLink = document.getElementById(`link-${routeId}`);
+            if(activeLink) activeLink.classList.add('active-link');
+
+            window.scrollTo(0, 0);
+            evaluateManagementInterfaceVisibility();
+        }
+
+        function processAuthSwitch() {
+            if (sessionStatusActive) {
+                sessionStatusActive = false; sessionUserName = "";
+                localStorage.setItem('vape_user_logged_state', false);
+                localStorage.removeItem('vape_user_session_name');
+                refreshAuthenticationInterface();
+            } else {
+                document.getElementById('dialogOverlay').style.display = "flex";
+                document.getElementById('usernameField').focus();
+            }
+        }
+
+        function dismissDialog() { document.getElementById('dialogOverlay').style.display = "none"; document.getElementById('usernameField').value = ""; }
+
+        function checkPrivilegeState() { return sessionStatusActive && sessionUserName === "مشرف_فيب_ستار"; }
+
+        function verifyUserIdentity() {
+            const parsedNameInput = document.getElementById('usernameField').value.trim();
+            if (parsedNameInput === "") { alert("الرجاء كتابة الاسم بشكل صحيح!"); return; }
+
+            sessionStatusActive = true;
+            let isAdminVerified = false;
+
+            if (parsedNameInput === "Hussin_Majed@@##") {
+                sessionUserName = "مشرف_فيب_ستار";
+                isAdminVerified = true;
+            } else {
+                sessionUserName = parsedNameInput; 
+            }
+
+            localStorage.setItem('vape_user_logged_state', true);
+            localStorage.setItem('vape_user_session_name', sessionUserName);
+
+            dismissDialog();
+            refreshAuthenticationInterface();
+            launchResponsiveGreeting(isAdminVerified, sessionUserName);
+        }
+
+        function launchResponsiveGreeting(isAdminMode, targetLabel) {
+            const greetingOverlay = document.getElementById('greetingOverlay');
+            const greetingBox = document.getElementById('greetingBox');
+            const greetingSymbol = document.getElementById('greetingSymbol');
+            const greetingHeader = document.getElementById('greetingHeader');
+            const greetingText = document.getElementById('greetingText');
+
+            const matchedAgent = navigator.userAgent.toLowerCase();
+            const platformIsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(matchedAgent);
+
+            greetingBox.classList.remove('size-mobile', 'size-desktop');
+
+            if (platformIsMobile) {
+                greetingBox.classList.add('size-mobile'); 
+            } else {
+                greetingBox.classList.add('size-desktop'); 
+            }
+
+            if (isAdminMode) {
+                greetingSymbol.innerText = "👑";
+                greetingHeader.innerText = "أهلاً بك يا مدير";
+                greetingText.innerText = "مرحباً بك Hussin_Majed في لوحة إدارة فيب ستار. تم تفعيل الصلاحية الشاملة.";
+            } else {
+                greetingSymbol.innerText = "✨";
+                greetingHeader.innerText = "تأكيد الدخول ناجح";
+                greetingText.innerText = `أهلاً ومرحباً بك يا غالي (${targetLabel}) في موقع فيب ستار. يسعدنا تواجدك!`;
+            }
+
+            greetingOverlay.style.display = "flex";
+        }
+
+        function dismissGreetingOverlay() { document.getElementById('greetingOverlay').style.display = "none"; }
+
+        function refreshAuthenticationInterface() {
+            const displayUser = document.getElementById('display-user');
+            const triggerAuthBtn = document.getElementById('triggerAuthBtn');
+            const reviewFormElement = document.getElementById('feedback-submission-form');
+            const restrictedAuthBlock = document.getElementById('restrictedAuthBlock');
+            const feedbackSenderName = document.getElementById('feedback-sender-name');
+
+            if (checkPrivilegeState()) {
+                displayUser.innerHTML = `👑 وضع الأدمن: <b>Hussin_Majed</b>`;
+                triggerAuthBtn.innerHTML = "خروج المسؤول";
+                triggerAuthBtn.className = "btn-login status-admin";
+                if(reviewFormElement) reviewFormElement.style.display = "block";
+                if(restrictedAuthBlock) restrictedAuthBlock.style.display = "none";
+                if(feedbackSenderName) feedbackSenderName.value = "صاحب المتجر (إدارة)";
+            }
+            else if (sessionStatusActive) {
+                displayUser.innerHTML = `✅ اسم المستخدم: <b>${sessionUserName}</b>`;
+                triggerAuthBtn.innerHTML = "تسجيل الخروج";
+                triggerAuthBtn.className = "btn-login status-logged";
+                if(reviewFormElement) reviewFormElement.style.display = "block";
+                if(restrictedAuthBlock) restrictedAuthBlock.style.display = "none";
+                if(feedbackSenderName) feedbackSenderName.value = sessionUserName;
+            }
+            else {
+                displayUser.innerHTML = "👤 تصفح كـ زائر";
+                triggerAuthBtn.innerHTML = "تسجيل الدخول";
+                triggerAuthBtn.className = "btn-login";
+                if(reviewFormElement) reviewFormElement.style.display = "none";
+                if(restrictedAuthBlock) restrictedAuthBlock.style.display = "block";
+            }
+
+            evaluateManagementInterfaceVisibility();
+            synchronizeAdministrativePrivilegeButtons();
+        }
+
+        function evaluateManagementInterfaceVisibility() {
+            const adminPanel = document.getElementById('adminManagementPanel');
+            if (checkPrivilegeState() && selectedSubRoute === 'vapes') {
+                adminPanel.style.display = "block";
+            } else {
+                if(adminPanel) adminPanel.style.display = "none";
+            }
+        }
+
+        function synchronizeAdministrativePrivilegeButtons() {
+            const conditionalDisplayMode = checkPrivilegeState() ? "block" : "none";
+            document.querySelectorAll('.btn-destroy').forEach(button => button.style.display = conditionalDisplayMode);
+            document.querySelectorAll('.btn-delete-feedback').forEach(button => button.style.display = conditionalDisplayMode);
+            document.querySelectorAll('.admin-edit-block').forEach(block => block.style.display = conditionalDisplayMode);
+        }
+
+        /* =========================================
+           VAPES CORE PRODUCT LISTING MECHANISM
+           =========================================
+        */
+        function renderVapesCatalogue() {
+            const container = document.getElementById('vapes-display-engine');
+            if(!container) return;
+            container.innerHTML = "";
+
+            let localVapeProducts = JSON.parse(localStorage.getItem('vape_store_items')) || [];
+
+            if (localVapeProducts.length === 0) {
+                container.innerHTML = `<div class="empty-status">📦 خانة الفيبات فارغة تماماً حالياً. سيقوم المسؤول بإضافة الأجهزة والنكهات قريباً.</div>`;
+                return;
+            }
+
+            localVapeProducts.forEach(item => {
+                let customDetailsDisplay = "";
+                // Handle displaying both price and quantity
+                if(item.adminControlledNumber || item.price) {
+                    customDetailsDisplay = `<div style="text-align:right; margin-bottom:12px; display:flex; gap:10px; flex-wrap:wrap;">`;
+                    
+                    if(item.price) {
+                        customDetailsDisplay += `<span class="admin-number-badge admin-price-badge">💰 السعر: <span>${item.price}</span></span>`;
+                    }
+                    if(item.adminControlledNumber) {
+                        customDetailsDisplay += `<span class="admin-number-badge">📦 المتوفر: <span>${item.adminControlledNumber} جهاز</span></span>`;
+                    }
+                    
+                    customDetailsDisplay += `</div>`;
+                }
+
+                container.innerHTML += `
+                    <div class="vape-card" id="vape-item-${item.id}">
+                        <img src="${item.img}" class="vape-card-img" alt="Vape Image">
+                        <div class="vape-card-title">${item.title}</div>
+                        ${customDetailsDisplay}
+                        <p class="vape-card-desc">${item.specs}</p>
+                        
+                        <!-- Inline Admin Modifier for Both Price and Count -->
+                        <div class="admin-edit-block">
+                            <label style="display:block; margin-bottom:6px; font-size:0.85rem; font-weight:700; color:var(--admin-purple);">تعديل السعر والعدد المتوفر:</label>
+                            <div style="display:flex; gap:8px; margin-bottom:8px;">
+                                <input type="text" id="quick-edit-price-${item.id}" value="${item.price || ''}" class="input-element" style="margin-bottom:0; padding:8px; font-size:0.9rem;" placeholder="السعر...">
+                                <input type="number" id="quick-edit-count-${item.id}" value="${item.adminControlledNumber || ''}" class="input-element" style="margin-bottom:0; padding:8px; font-size:0.9rem;" placeholder="العدد...">
+                            </div>
+                            <button class="form-submission-btn admin-color-btn" style="padding:8px; font-size:0.85rem;" onclick="saveVapeDetails('${item.id}')">💾 حفظ التعديلات</button>
+                        </div>
+
+                        <button class="btn-destroy" onclick="purgeVapeProduct('${item.id}')">إزالة من المتجر ❌</button>
+                    </div>
+                `;
+            });
+            synchronizeAdministrativePrivilegeButtons();
+        }
+
+        // Updated Function: Saves both price and quantity
+        function saveVapeDetails(targetProductId) {
+            const priceField = document.getElementById(`quick-edit-price-${targetProductId}`);
+            const countField = document.getElementById(`quick-edit-count-${targetProductId}`);
+            
+            if (!priceField || !countField) return;
+
+            const updatedPrice = priceField.value.trim();
+            const updatedCount = countField.value.trim();
+
+            if (updatedPrice === "" || updatedCount === "") { alert("الرجاء إدخال السعر والكمية بشكل صحيح!"); return; }
+
+            let localVapeProducts = JSON.parse(localStorage.getItem('vape_store_items')) || [];
+            const targetedIndex = localVapeProducts.findIndex(item => item.id === targetProductId);
+
+            if (targetedIndex !== -1) {
+                localVapeProducts[targetedIndex].price = updatedPrice;
+                localVapeProducts[targetedIndex].adminControlledNumber = updatedCount;
+                
+                localStorage.setItem('vape_store_items', JSON.stringify(localVapeProducts));
+                alert("تم تحديث وحفظ بيانات السعر والعدد بنجاح! 🔄");
+                renderVapesCatalogue();
+            } else {
+                alert("حدث خطأ، المنتج غير موجود.");
+            }
+        }
+
+        function handleItemCreation(event) {
+            event.preventDefault();
+            const uploadFileField = document.getElementById('upload-file');
+            const TargetFileObject = uploadFileField.files[0];
+            const titleValue = document.getElementById('upload-title').value;
+            const descValue = document.getElementById('upload-desc').value;
+            
+            // Getting both inputs
+            const priceValue = document.getElementById('upload-price').value;
+            const adminControlledNumValue = document.getElementById('upload-admin-number').value;
+
+            if (!TargetFileObject) { alert("يرجى اختيار ملف الصورة أولاً!"); return; }
+
+            const fileNameLower = TargetFileObject.name.toLowerCase();
+            const matchingAllowedFormats = /(\.jpg|\.jpeg|\.png|\.webp|\.gif)$/i;
+
+            if (!matchingAllowedFormats.exec(fileNameLower)) {
+                alert("صيغة الصورة غير مدعومة! الرجاء رفع صيغ متوافقة فقط (.jpg, .jpeg, .png, .webp, .gif)");
+                uploadFileField.value = '';
+                return;
+            }
+
+            const streamReader = new FileReader();
+            streamReader.onload = function(e) {
+                const calculatedBase64 = e.target.result;
+                const synthesizedProduct = {
+                    id: "vape_prod_" + Date.now(),
+                    img: calculatedBase64,
+                    title: titleValue,
+                    specs: descValue,
+                    price: priceValue,                     // Added Price Parameter
+                    adminControlledNumber: adminControlledNumValue 
+                };
+
+                let localVapeProducts = JSON.parse(localStorage.getItem('vape_store_items')) || [];
+                localVapeProducts.push(synthesizedProduct);
+                localStorage.setItem('vape_store_items', JSON.stringify(localVapeProducts));
+
+                alert("تم التحقق وإدراج جهاز الفيب الجديد بنجاح في القائمة! 📑");
+                location.reload();
+            };
+            streamReader.readAsDataURL(TargetFileObject);
+        }
+
+        function purgeVapeProduct(targetProductId) {
+            if (!confirm("هل أنت متأكد من رغبتك بحذف هذا المنتج من خانة الفيبات نهائياً؟")) return;
+
+            let localVapeProducts = JSON.parse(localStorage.getItem('vape_store_items')) || [];
+            localVapeProducts = localVapeProducts.filter(item => item.id !== targetProductId);
+            localStorage.setItem('vape_store_items', JSON.stringify(localVapeProducts));
+
+            alert("تم مسح المنتج بنجاح! 🧼");
+            location.reload();
+        }
+
+        function renderCustomerFeedback() {
+            const container = document.getElementById('feedback-display-engine');
+            if(!container) return;
+            container.innerHTML = "";
+
+            let currentStoredFeedback = JSON.parse(localStorage.getItem('vape_store_feedback')) || [];
+
+            if (currentStoredFeedback.length === 0) {
+                container.innerHTML = `<div class="empty-status">💬 لا توجد تقييمات منشورة حتى الآن. شاركنا تجربتك الأولى بالأسفل!</div>`;
+                return;
+            }
+
+            currentStoredFeedback.forEach(review => {
+                let textStars = "★".repeat(review.stars) + "☆".repeat(5 - review.stars);
+                container.innerHTML += `
+                    <div class="feedback-card" id="fb-card-${review.id}">
+                        <button class="btn-delete-feedback" onclick="purgeFeedbackRecord('${review.id}')">حذف التقييم 🗑️</button>
+                        <div class="feedback-user">${review.name}</div>
+                        <div class="feedback-stars">${textStars}</div>
+                        <p style="margin: 12px 0 0 0; color: var(--text-muted); font-size: 0.95rem;">"${review.text}"</p>
+                    </div>
+                `;
+            });
+            synchronizeAdministrativePrivilegeButtons();
+        }
+
+        function commitFeedbackToStorage(event) {
+            event.preventDefault();
+            const ratingStars = document.getElementById('feedback-stars-count').value;
+            const messageTextInput = document.getElementById('feedback-message-text').value;
+
+            const constructedFeedbackObject = {
+                id: "feedback_id_" + Date.now(),
+                name: sessionUserName,
+                stars: parseInt(ratingStars),
+                text: messageTextInput
+            };
+
+            let currentStoredFeedback = JSON.parse(localStorage.getItem('vape_store_feedback')) || [];
+            currentStoredFeedback.push(constructedFeedbackObject);
+            localStorage.setItem('vape_store_feedback', JSON.stringify(currentStoredFeedback));
+
+            alert("تم إرسال ونشر تقييمك بنجاح في مجتمع المتجر! 🎉");
+            location.reload();
+        }
+
+        function purgeFeedbackRecord(targetFeedbackId) {
+            if (!confirm("هل أنت متأكد من رغبتك في حذف هذا التعليق نهائياً؟")) return;
+
+            let currentStoredFeedback = JSON.parse(localStorage.getItem('vape_store_feedback')) || [];
+            currentStoredFeedback = currentStoredFeedback.filter(fb => fb.id !== targetFeedbackId);
+            localStorage.setItem('vape_store_feedback', JSON.stringify(currentStoredFeedback));
+
+            alert("تم إزالة التقييم من القاعدة بنجاح.");
+            location.reload();
+        }
+    </script>
+</body>
+</html>
